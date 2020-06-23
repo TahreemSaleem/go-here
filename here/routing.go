@@ -2,11 +2,17 @@ package here
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
+	"github.com/Jeffail/gabs"
+	"log"
 	"net/http"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/dghubble/sling"
+	"github.com/ompluscator/dynamic-struct"
 )
 
 // RoutingService provides for HERE routing api.
@@ -137,9 +143,9 @@ func createWaypoint(waypoint [2]float32) string {
 }
 
 // CreateRoutingParams creates routing parameters struct.
-func (s *RoutingService) CreateRoutingParams(waypoint0 [2]float32, waypoint1 [2]float32, apiKey string, modes []Enum) RoutingParams {
-	stringWaypoint0 := createWaypoint(waypoint0)
-	stringWaypoint1 := createWaypoint(waypoint1)
+func (s *RoutingService) CreateRoutingParams(origin [2]float32, destination [2]float32, waypoints [][2]float32, apiKey string, modes []Enum) interface{} {
+	stringOrigin := createWaypoint(origin)
+	stringDestination := createWaypoint(destination)
 	var buffer bytes.Buffer
 	for _, routeMode := range modes {
 		mode := Enum.ValueOfRouteMode(routeMode)
@@ -147,20 +153,51 @@ func (s *RoutingService) CreateRoutingParams(waypoint0 [2]float32, waypoint1 [2]
 	}
 	routeModes := buffer.String()
 	routeModes = routeModes[:len(routeModes)-1]
-	routingParams := RoutingParams{
-		Waypoint0: stringWaypoint0,
-		Waypoint1: stringWaypoint1,
-		APIKey:    apiKey,
-		Modes:     routeModes,
-		Departure: "now",
+
+	if len(waypoints) <= 0 {
+		routingParams := RoutingParams{
+			Waypoint0: stringOrigin,
+			Waypoint1: stringDestination,
+			APIKey:    apiKey,
+			Modes:     routeModes,
+			Departure: "now",
+		}
+		return routingParams
 	}
-	return routingParams
+
+	var builder dynamicstruct.Builder
+	var name string
+	var index int
+	jsonObj := gabs.New()
+	extendStruct := dynamicstruct.ExtendStruct(RoutingParams{})
+	for index = 0; index <= len(waypoints); index++ {
+		name = "Waypoint" + strconv.Itoa(index+1)
+		builder = extendStruct.AddField(name, "", `url:"`+strings.ToLower(name)+`"`)
+		if index < len(waypoints) {
+			jsonObj.Set(createWaypoint(waypoints[index]), name)
+		}
+	}
+	instance := builder.Build().New()
+
+	jsonObj.Set(apiKey, "APIKey")
+	jsonObj.Set(routeModes, "Modes")
+	jsonObj.Set("now", "Departure")
+	jsonObj.Set(stringOrigin, "Waypoint0")
+	jsonObj.Set(stringDestination, "Waypoint"+strconv.Itoa(index))
+
+	err := json.Unmarshal(jsonObj.Bytes(), &instance)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+	return instance
 }
 
 // Route with given parameters.
-func (s *RoutingService) Route(params *RoutingParams) (*RoutingResponse, *http.Response, error) {
+func (s *RoutingService) Route(params interface{}) (*RoutingResponse, *http.Response, error) {
 	routes := new(RoutingResponse)
 	apiError := new(APIError)
 	resp, err := s.sling.New().Get("calculateroute.json").QueryStruct(params).Receive(routes, apiError)
+	fmt.Println(err)
 	return routes, resp, relevantError(err, *apiError)
 }
