@@ -177,7 +177,7 @@ func (s *RoutingService) CreateRoutingParams(origin [2]float32, destination [2]f
 			jsonObj.Set(createWaypoint(waypoints[index]), name)
 		}
 	}
-	instance := builder.Build().New()
+	routingParams := builder.Build().New()
 
 	jsonObj.Set(apiKey, "APIKey")
 	jsonObj.Set(routeModes, "Modes")
@@ -190,7 +190,7 @@ func (s *RoutingService) CreateRoutingParams(origin [2]float32, destination [2]f
 	if err != nil {
 		log.Fatal(err)
 	}
-	return instance
+	return routingParams
 }
 
 // Route with given parameters.
