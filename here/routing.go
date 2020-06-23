@@ -185,7 +185,7 @@ func (s *RoutingService) CreateRoutingParams(origin [2]float32, destination [2]f
 	jsonObj.Set(stringOrigin, "Waypoint0")
 	jsonObj.Set(stringDestination, "Waypoint"+strconv.Itoa(index))
 
-	err := json.Unmarshal(jsonObj.Bytes(), &instance)
+	err := json.Unmarshal(jsonObj.Bytes(), &routingParams)
 
 	if err != nil {
 		log.Fatal(err)
