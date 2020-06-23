@@ -47,18 +47,19 @@ type GeocodingResponse struct {
 			Type   string `json:"_type"`
 			ViewID int    `json:"ViewId"`
 			Result []struct {
-				Relevance    int    `json:"Relevance"`
-				MatchLevel   string `json:"MatchLevel"`
+				Relevance    float32 `json:"Relevance"`
+				MatchLevel   string  `json:"MatchLevel"`
 				MatchQuality struct {
-					State       int       `json:"State"`
-					City        int       `json:"City"`
+					State       float32   `json:"State"`
+					City        float32   `json:"City"`
 					Street      []float64 `json:"Street"`
-					HouseNumber int       `json:"HouseNumber"`
+					HouseNumber float32   `json:"HouseNumber"`
 				} `json:"MatchQuality"`
 				MatchType string `json:"MatchType"`
 				Location  struct {
 					LocationID      string `json:"LocationId"`
 					LocationType    string `json:"LocationType"`
+					Name            string `json:"Name"`
 					DisplayPosition struct {
 						Latitude  float64 `json:"Latitude"`
 						Longitude float64 `json:"Longitude"`

@@ -48,7 +48,7 @@ func NewGeocodingClient(httpClient *http.Client) *Client {
 
 // NewReverseGeocodingClient returns a new ReverseGeocodingClient.
 func NewReverseGeocodingClient(httpClient *http.Client) *Client {
-	base := sling.New().Client(httpClient).Base("https://reverse.geocoder.api.here.com/6.2/")
+	base := sling.New().Client(httpClient).Base("https://reverse.geocoder.ls.hereapi.com/6.2/")
 	return &Client{
 		sling:            base,
 		ReverseGeocoding: newReverseGeocodingService(base.New()),
