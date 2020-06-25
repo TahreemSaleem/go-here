@@ -198,6 +198,5 @@ func (s *RoutingService) Route(params interface{}) (*RoutingResponse, *http.Resp
 	routes := new(RoutingResponse)
 	apiError := new(APIError)
 	resp, err := s.sling.New().Get("calculateroute.json").QueryStruct(params).Receive(routes, apiError)
-	fmt.Println(err)
 	return routes, resp, relevantError(err, *apiError)
 }
