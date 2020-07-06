@@ -39,7 +39,7 @@ func NewFleetTelematicsClient(httpClient *http.Client) *Client {
 
 // NewGeocodingClient returns a new GeocodingClient.
 func NewGeocodingClient(httpClient *http.Client) *Client {
-	base := sling.New().Client(httpClient).Base("https://geocoder.api.here.com/6.2/")
+	base := sling.New().Client(httpClient).Base("https://geocoder.ls.hereapi.com/6.2/")
 	return &Client{
 		sling:     base,
 		Geocoding: newGeocodingService(base.New()),
