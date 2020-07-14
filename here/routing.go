@@ -127,9 +127,9 @@ type RoutingResponse struct {
 				TravelTime  int      `json:"travelTime"`
 				Type        string   `json:"_type"`
 			} `json:"summary"`
+			Shape    []string `json:"shape"`
 		} `json:"route"`
 		Language string   `json:"language"`
-		Shape    []string `json:"shape"`
 	} `json:"response"`
 }
 
