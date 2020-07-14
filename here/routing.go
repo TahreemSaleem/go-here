@@ -22,11 +22,13 @@ type RoutingService struct {
 
 // RoutingParams parameters for Routing Service.
 type RoutingParams struct {
-	Waypoint0 string `url:"waypoint0"`
-	Waypoint1 string `url:"waypoint1"`
-	APIKey    string `url:"apikey"`
-	Modes     string `url:"mode"`
-	Departure string `url:"departure"`
+	Waypoint0          string `url:"waypoint0"`
+	Waypoint1          string `url:"waypoint1"`
+	APIKey             string `url:"apikey"`
+	Modes              string `url:"mode"`
+	Departure          string `url:"departure"`
+	RouteAttributes    string `url:"routeattributes"`
+	ManeuverAttributes string `url:"maneuverattributes"`
 }
 
 // RoutingResponse model for routing service.
@@ -108,11 +110,12 @@ type RoutingResponse struct {
 						Latitude  float64 `json:"latitude"`
 						Longitude float64 `json:"longitude"`
 					} `json:"position"`
-					Instruction string `json:"instruction"`
-					TravelTime  int    `json:"travelTime"`
-					Length      int    `json:"length"`
-					ID          string `json:"id"`
-					Type        string `json:"_type"`
+					Instruction string   `json:"instruction"`
+					TravelTime  int      `json:"travelTime"`
+					Length      int      `json:"length"`
+					ID          string   `json:"id"`
+					Type        string   `json:"_type"`
+					Shape       []string `json:"shape"`
 				} `json:"maneuver"`
 			} `json:"leg"`
 			Summary struct {
@@ -125,7 +128,8 @@ type RoutingResponse struct {
 				Type        string   `json:"_type"`
 			} `json:"summary"`
 		} `json:"route"`
-		Language string `json:"language"`
+		Language string   `json:"language"`
+		Shape    []string `json:"shape"`
 	} `json:"response"`
 }
 
@@ -156,11 +160,13 @@ func (s *RoutingService) CreateRoutingParams(origin [2]float32, destination [2]f
 
 	if len(waypoints) <= 0 {
 		routingParams := RoutingParams{
-			Waypoint0: stringOrigin,
-			Waypoint1: stringDestination,
-			APIKey:    apiKey,
-			Modes:     routeModes,
-			Departure: "now",
+			Waypoint0:          stringOrigin,
+			Waypoint1:          stringDestination,
+			APIKey:             apiKey,
+			Modes:              routeModes,
+			Departure:          "now",
+			RouteAttributes:    "sh",
+			ManeuverAttributes: "sh",
 		}
 		return routingParams
 	}
